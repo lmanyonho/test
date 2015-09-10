@@ -1,9 +1,11 @@
 #!/bin/sh
+
 set -e
 error_msg() { printf "\033[31m%s\033[0m\n" "$*"; }
 notice_msg() { printf "\033[33m%s\033[0m " "$*"; }
 done_msg() { printf "\033[32m%s\033[0m\n" "$*"; }
 DONE_MSG=$(done_msg done)
+
 
 ARGUMENTS_FILE="$(tempfile)"
 truncate --size=0 "$ARGUMENTS_FILE"
@@ -39,6 +41,7 @@ fi
 usage_and_exit() {
     cat >&2 <<EOUSAGE
 Usage: $0 [--default] <SITE-NAME> <UNIX-USER> [HOST]
+HOST is only optional if you are running this on an EC2 instance.
 --default means to install as the default site for this server,
 rather than a virtualhost for HOST.
 EOUSAGE
@@ -54,12 +57,22 @@ SITE="$1"
 UNIX_USER="$2"
 
 case "$SITE" in
-    hwcc2025 | harare | leonTest | cuzTest )
+    fixmystreet | hwcc2025)
         echo ==== Installing $SITE;;
     *)
         echo Installing $SITE with this script is not currently supported.
         exit 1;;
 esac
+
+
+
+
+
+
+
+
+
+
 
 # Install some packages that we will definitely need:
 echo -n "Updating package lists... "
