@@ -1,25 +1,4 @@
 #!/bin/sh
-
-# This script will install HWCC2025 sites on a clean install of Ubuntu
-# precise. It contains common code that instlls and defines functions 
-# used as well as their sources.
-# a site-specific script, called either bin/site-specific-install.sh or
-# script/site-specific-install.sh.
-# This script makes significant changes to the server’s setup,
-# including modifying the web server setup, creating a user account and
-# database, installing new packages, etc.
-
-# The usage is:
-#
-#   lee-hre-site.sh [--dev] [--default] SITE-NAME UNIX-USER [HOST]
-#
-# ... where --default means to install as the default site for this
-# server.
-#
-# --dev will work from a checkout of the repository in your current directory,
-# (it will check it out if not present, do nothing if it is), and will be
-# passed down to site specific scripts so they can e.g. not install nginx.
-
 set -e
 error_msg() { printf "\033[31m%s\033[0m\n" "$*"; }
 notice_msg() { printf "\033[33m%s\033[0m " "$*"; }
@@ -99,18 +78,10 @@ else
     DIRECTORY="/var/www/$HOST"
 fi
 
-# Make sure that that directory exists:
 mkdir -p "$DIRECTORY"
 
-# Preserve a copy of this script, as used when last run.  This is
-# useful so that the install script can be found in a predictable
-# location; for example, Alaveteli relies on this to rerun the install
-# script on rebooting an EC2 instance.
 COPIED_SCRIPT="$DIRECTORY/lee-hre-site.sh"
 
-# $0 might not refer to a file, most commonly in the situation where
-# you're piping the script from curl directly to "sh -s".
-# support running this script by piping directly from curl any more.
 if [ ! -f "$0" ]
 then
     error_msg "Couldn't find the location of this script:"
@@ -118,7 +89,6 @@ then
     exit 1
 fi
 
-# If the files are the same, copying it over itself will fail:
 if [ "$(readlink -f "$0")" != "$(readlink -f "$COPIED_SCRIPT")" ]
 then
     cp "$0" "$COPIED_SCRIPT"
@@ -152,9 +122,6 @@ fi
 echo $DONE_MSG
 
 add_locale() {
-    # Adds a specific UTF-8 locale (with Ubuntu you can provide it on the
-    # command line, but Debian requires a file edit)
-
     echo -n "Generating locale $1... "
     if [ "$(locale -a | egrep -i "^$1.utf-?8$" | wc -l)" = "1" ]
     then
